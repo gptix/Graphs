@@ -1,84 +1,180 @@
-"""
-Simple graph implementation
-"""
-from util import Stack, Queue  # These may come in handy
+from util import Stack
+from util import Queue
 
-class Graph:
+"""In the file graph.py, implement a Graph class that supports the API in the example below. In particular, 
+this means there should be a field 
 
-    """Represent a graph as a dictionary of vertices mapping labels to edges."""
+vertices that contains 
+
+a dictionary 
+
+mapping vertex labels to edges.
+
+ For example:
+
+{
+    '0': {'1', '3'},
+    '1': {'0'},
+    '2': set(),
+    '3': {'0'}
+}
+This represents a graph with four vertices and two total (bidirectional) edges. The vertex '2' has no edges, 
+while '0' is connected to both '1' and '3'.
+
+You should also create add_vertex and add_edge methods that add the specified entities to the graph. To 
+test your implementation, instantiate an empty graph and then try to run the following:
+"""
+
+class Graph():
+    """A graph stored as a dictionary mapping labels to sets of edges."""
+
     def __init__(self):
-        self.vertices = {}
+        self.vertices = {} # a dict
 
     def add_vertex(self, vertex_id):
-        """
-        Add a vertex to the graph.
-        """
-        pass  # TODO
+        self.vertices[vertex_id] = set() # a set within the dict
+        # print(self.vertices)
 
-    def add_edge(self, v1, v2):
-        """
-        Add a directed edge to the graph.
-        """
-        pass  # TODO
 
-    def get_neighbors(self, vertex_id):
-        """
-        Get all neighbors (edges) of a vertex.
-        """
-        pass  # TODO
+    def add_edge(self, vertex_id, other_node):
+        # if not vertex_id in self.vertices:
+            # raise Exception(f"No 'from' vertex with value {vertex_label}")
+        self.vertices[vertex_id].add(other_node)
+        
+    """Write a function within your Graph class that takes takes a starting 
+node as an argument, then performs BFT. Your function should print 
+the resulting nodes in the order they were visited. Note that there 
+are multiple valid paths that may be printed."""
 
-    def bft(self, starting_vertex):
-        """
-        Print each vertex in breadth-first order
-        beginning from starting_vertex.
-        """
-        pass  # TODO
+    def get_neighbors(self, vertex_label):
+        return self.vertices[vertex_label]
 
-    def dft(self, starting_vertex):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
-        """
-        pass  # TODO
+    def bft(self, node):
+        """Breadth-first traversal of graph."""
+        q = Queue()
+        q.enqueue(node)
 
-    def dft_recursive(self, starting_vertex):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
+        visited = set()
 
-        This should be done using recursion.
-        """
-        pass  # TODO
+        while q.size() > 0:
+            current_node = q.dequeue()
 
-    def bfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing the shortest path from
-        starting_vertex to destination_vertex in
-        breath-first order.
-        """
-        pass  # TODO
+            if current_node not in visited:
 
-    def dfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
-        """
-        pass  # TODO
+                visited.add(current_node)
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
+                neighbors  = self.get_neighbors(current_node)
 
-        This should be done using recursion.
-        """
-        pass  # TODO
+                for n in neighbors:
+
+                    q.enqueue(n)
+
+        print(f'Order visited - {visited}')
+
+
+    def dft(self, node):
+        """Depth-first traversal of graph."""
+
+        s = Stack()
+        s.push(node)
+        # print(node)
+
+        visited = set()
+
+        while s.size() > 0:
+
+            current_node = s.pop()
+
+            visited.add(current_node)
+
+            if current_node not in visited:
+
+                # print(current_node)
+
+                visited.add(current_node)
+
+                neighbors  = self.get_neighbors(current_node)
+
+                for n in neighbors:
+
+                    s.push(n)
+
+        for v in visited:
+            print(f'{v}\n')
+
+
+    def dft_recursive(self, node, visited=set()):
+        """Use recursion to do DFT."""
+        print(node)
+        visited.add(node)
+
+        neighbors  = self.get_neighbors(node)
+        for n in neighbors:
+
+            if n not in visited:
+                self.dft_recursive(n, visited)
+                
+    def bfs(self, start, seek):
+        """Breadth-first search, returning the shortest path to
+        the target."""
+
+        q = Queue()
+        visited = set()
+        path = [start]
+    
+        q.enqueue(path)
+
+        while q.size() > 0:
+            current_path = q.dequeue()
+            current_node = current_path[-1]
+
+        if current_node == seek:
+            return current_path
+
+        if current_node not in visited:
+
+            visited.add(current_node)
+
+        neighbors = self.get_neighbors(current_node)
+        for n in neighbors:
+
+            path_copy = current_path[:]
+
+            path_copy.append(n)
+
+            q.enqueue(path_copy)
+
+    def dfs_recursive(self, vertex, seek, path=[], visited=(set)):
+        """Use recursion to do search and return a path."""
+
+        # keep track of nodes we have visited.
+        visited.add(vertex)
+
+        # Test to see if vertex is what we are seeking.
+        # This is a halting case.
+        if vertex == seek:
+            return path
+
+        if len(path) == 0:
+            path.append(vertex)
+
+        neighbors  = self.get_neighbors(vertex)
+        for n in neighbors:
+            # If we have not yet visited the neighbor, recurse.
+            if n not in visited:
+                result = self.dft_recursive(n, seek, path + [n], visited)
+
+        # if recursion returns a path, pass that path back 'up'.
+        # This is a second halting case.
+        if result is not None:
+            return result
+
+
+
+        
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
-    # https://github.com/LambdaSchool/Graphs/blob/master/objectives/breadth-first-search/img/bfs-visit-order.png
     graph.add_vertex(1)
     graph.add_vertex(2)
     graph.add_vertex(3)
@@ -96,50 +192,3 @@ if __name__ == '__main__':
     graph.add_edge(3, 5)
     graph.add_edge(2, 3)
     graph.add_edge(4, 6)
-
-    '''
-    Should print:
-        {1: {2}, 2: {3, 4}, 3: {5}, 4: {6, 7}, 5: {3}, 6: {3}, 7: {1, 6}}
-    '''
-    print(graph.vertices)
-
-    '''
-    Valid BFT paths:
-        1, 2, 3, 4, 5, 6, 7
-        1, 2, 3, 4, 5, 7, 6
-        1, 2, 3, 4, 6, 7, 5
-        1, 2, 3, 4, 6, 5, 7
-        1, 2, 3, 4, 7, 6, 5
-        1, 2, 3, 4, 7, 5, 6
-        1, 2, 4, 3, 5, 6, 7
-        1, 2, 4, 3, 5, 7, 6
-        1, 2, 4, 3, 6, 7, 5
-        1, 2, 4, 3, 6, 5, 7
-        1, 2, 4, 3, 7, 6, 5
-        1, 2, 4, 3, 7, 5, 6
-    '''
-    graph.bft(1)
-
-    '''
-    Valid DFT paths:
-        1, 2, 3, 5, 4, 6, 7
-        1, 2, 3, 5, 4, 7, 6
-        1, 2, 4, 7, 6, 3, 5
-        1, 2, 4, 6, 3, 5, 7
-    '''
-    graph.dft(1)
-    graph.dft_recursive(1)
-
-    '''
-    Valid BFS path:
-        [1, 2, 4, 6]
-    '''
-    print(graph.bfs(1, 6))
-
-    '''
-    Valid DFS paths:
-        [1, 2, 4, 6]
-        [1, 2, 4, 7, 6]
-    '''
-    print(graph.dfs(1, 6))
-    print(graph.dfs_recursive(1, 6))
