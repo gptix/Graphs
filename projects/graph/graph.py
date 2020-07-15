@@ -4,7 +4,7 @@ from util import Queue
 """In the file graph.py, implement a Graph class that supports the API in the example below. In particular, 
 this means there should be a field 
 
-vertices that contains 
+vertices that contains
 
 a dictionary 
 
@@ -33,22 +33,15 @@ class Graph():
 
     def add_vertex(self, vertex_id):
         self.vertices[vertex_id] = set() # a set within the dict
-        # print(self.vertices)
-
 
     def add_edge(self, vertex_id, other_node):
         # if not vertex_id in self.vertices:
             # raise Exception(f"No 'from' vertex with value {vertex_label}")
         self.vertices[vertex_id].add(other_node)
         
-    """Write a function within your Graph class that takes takes a starting 
-node as an argument, then performs BFT. Your function should print 
-the resulting nodes in the order they were visited. Note that there 
-are multiple valid paths that may be printed."""
-
     def get_neighbors(self, vertex_label):
         return self.vertices[vertex_label]
-
+        
     def bft(self, node):
         """Breadth-first traversal of graph."""
         q = Queue()
@@ -69,29 +62,26 @@ are multiple valid paths that may be printed."""
 
                     q.enqueue(n)
 
-        print(f'Order visited - {visited}')
+        for v in visited:
+            print(f'{v}')
 
 
     def dft(self, node):
         """Depth-first traversal of graph."""
-
         s = Stack()
         s.push(node)
-        # print(node)
 
-        visited = set()
+        visited = []
 
         while s.size() > 0:
-
             current_node = s.pop()
 
-            visited.add(current_node)
-
             if current_node not in visited:
-
                 # print(current_node)
 
-                visited.add(current_node)
+
+                visited.append(current_node)
+                # print(visited)
 
                 neighbors  = self.get_neighbors(current_node)
 
@@ -100,7 +90,31 @@ are multiple valid paths that may be printed."""
                     s.push(n)
 
         for v in visited:
-            print(f'{v}\n')
+            print(f'{v}')
+
+
+
+        # s = Stack()
+        # s.push(node)
+
+        # visited = set()
+
+        # while s.size() > 0:
+
+        #     current_node = s.pop()
+
+        #     if current_node not in visited:
+
+        #         visited.add(current_node)
+
+        #         neighbors  = self.get_neighbors(current_node)
+
+        #         for n in neighbors:
+
+        #             s.push(n)
+
+        # for v in visited:
+        #     print(f'{v}\n')
 
 
     def dft_recursive(self, node, visited=set()):
@@ -121,30 +135,35 @@ are multiple valid paths that may be printed."""
         q = Queue()
         visited = set()
         path = [start]
+        # print(path)
     
         q.enqueue(path)
 
         while q.size() > 0:
+            # print(visited)
+            # print(q.size())
             current_path = q.dequeue()
+            # print(current_path)
             current_node = current_path[-1]
+            # print(current_node)
 
-        if current_node == seek:
-            return current_path
+            if current_node == seek:
+                return current_path
 
-        if current_node not in visited:
+            if current_node not in visited:
+                visited.add(current_node)
 
-            visited.add(current_node)
+            neighbors = self.get_neighbors(current_node)
+            for n in neighbors:
 
-        neighbors = self.get_neighbors(current_node)
-        for n in neighbors:
+                path_copy = current_path[:]
+                # print(path_copy)
+                path_copy.append(n)
+                # print(path_copy)
 
-            path_copy = current_path[:]
+                q.enqueue(path_copy)
 
-            path_copy.append(n)
-
-            q.enqueue(path_copy)
-
-    def dfs_recursive(self, vertex, seek, path=[], visited=(set)):
+    def dfs_recursive(self, vertex, seek, path=[], visited=set()):
         """Use recursion to do search and return a path."""
 
         # keep track of nodes we have visited.
@@ -160,18 +179,17 @@ are multiple valid paths that may be printed."""
 
         neighbors  = self.get_neighbors(vertex)
         for n in neighbors:
+
             # If we have not yet visited the neighbor, recurse.
             if n not in visited:
-                result = self.dft_recursive(n, seek, path + [n], visited)
-
-        # if recursion returns a path, pass that path back 'up'.
-        # This is a second halting case.
-        if result is not None:
-            return result
+                result = self.dfs_recursive(n, seek, path + [n], visited)
 
 
-
-        
+                # if recursion returns a path, pass that path back 'up'.
+                # This is a second halting case.
+                if result is not None:
+                    return result
+                
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -192,3 +210,5 @@ if __name__ == '__main__':
     graph.add_edge(3, 5)
     graph.add_edge(2, 3)
     graph.add_edge(4, 6)
+# 
+# graph.dfs_recursive(1,6)
