@@ -91,31 +91,7 @@ class Graph():
 
         for v in visited:
             print(f'{v}')
-
-
-
-        # s = Stack()
-        # s.push(node)
-
-        # visited = set()
-
-        # while s.size() > 0:
-
-        #     current_node = s.pop()
-
-        #     if current_node not in visited:
-
-        #         visited.add(current_node)
-
-        #         neighbors  = self.get_neighbors(current_node)
-
-        #         for n in neighbors:
-
-        #             s.push(n)
-
-        # for v in visited:
-        #     print(f'{v}\n')
-
+  
 
     def dft_recursive(self, node, visited=set()):
         """Use recursion to do DFT."""
@@ -162,6 +138,48 @@ class Graph():
                 # print(path_copy)
 
                 q.enqueue(path_copy)
+
+
+
+
+    def dfs(self, start, seek):
+        """Depth-first search, returning the shortest path to
+        the target."""
+
+        s = Stack()
+        visited = set()
+        path = [start]
+        # print(path)
+    
+        s.push(path)
+
+        while s.size() > 0:
+            # print(visited)
+            # print(q.size())
+            current_path = s.pop()
+            # print(current_path)
+            current_node = current_path[-1]
+            # print(current_node)
+
+            if current_node == seek:
+                return current_path
+
+            if current_node not in visited:
+                visited.add(current_node)
+
+            neighbors = self.get_neighbors(current_node)
+            for n in neighbors:
+
+                path_copy = current_path[:]
+                # print(path_copy)
+                path_copy.append(n)
+                # print(path_copy)
+
+                s.push(path_copy)
+
+
+
+
 
     def dfs_recursive(self, vertex, seek, path=[], visited=set()):
         """Use recursion to do search and return a path."""
