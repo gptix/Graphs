@@ -1,3 +1,6 @@
+from util import Queue
+from random import randrange
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -42,12 +45,24 @@ class SocialGraph:
         self.last_id = 0
         self.users = {}
         self.friendships = {}
-        # !!!! IMPLEMENT ME
 
         # Add users
+        # [self.add_user(u) for u in range(1,num_users+1)]
+
+        for k in range(1,num_users+1):
+            self.add_user(f'user {k}')
 
         # Create friendships
 
+        for m in range(1, num_users * avg_friendships // 2): 
+            rnd_user = randrange(1, num_users+1)
+            rnd_fren = randrange(1, num_users+1)
+            while rnd_user == rnd_fren or rnd_fren in self.friendships[rnd_user]:
+                rnd_user = randrange(1, num_users+1)
+                rnd_fren = randrange(1, num_users+1)
+            self.add_friendship(rnd_user, rnd_fren)
+
+       
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
@@ -58,13 +73,30 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+
+        q = Queue()
+        q.enqueue([user_id])
+
+        # build graph, breadth first
+        while q.size() > 0:
+            path = q.dequeue()
+            vertex = path[-1]
+
+            if vertex not in visited:
+                visited[vertex] = path
+
+                for neighbor in self.friendships[vertex]:
+                    new_path = path.copy()
+                    new_path.append(neighbor)
+                    q.enqueue(new_path)
+
         return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
+    # print(sg.users)
     print(sg.friendships)
     connections = sg.get_all_social_paths(1)
     print(connections)
